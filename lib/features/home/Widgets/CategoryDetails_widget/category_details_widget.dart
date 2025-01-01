@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:next_nexus_app/Remote/api_manager.dart';
-import 'package:next_nexus_app/features/home/Widgets/Category_Details/articles_List.dart';
-
+import 'package:provider/provider.dart';
 import '../../../../Remote/Sources_Response/Source.dart';
+import '../Articles/articles_List.dart';
+import 'categoryDetailsViewModel.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryDetailsWidget extends StatefulWidget {
-  String category;
-   CategoryDetailsWidget({super.key,required this.category});
+  final String category;
+
+  const CategoryDetailsWidget({super.key, required this.category});
 
   @override
   State<CategoryDetailsWidget> createState() => _CategoryDetailsWidgetState();
@@ -16,36 +17,40 @@ class CategoryDetailsWidget extends StatefulWidget {
 class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: ApiManager.getSources(widget.category),
-        builder: (context,snapshot){
-          if( snapshot.connectionState==ConnectionState.waiting){
-            return const Center(child: CircularProgressIndicator(),);
+    return ChangeNotifierProvider(
+      create: (context) => CategoryDetailsViewModel()..getSources(widget.category),
+      child: Consumer<CategoryDetailsViewModel>(
+        builder: (context, viewModel, child) {
+          if (viewModel.showLoading) {
+            return const Center(child: CircularProgressIndicator());
           }
-          if(snapshot.hasError){
-            return Column(
-              children: [
-                Text(snapshot.error.toString()),
-                ElevatedButton(onPressed: (){
-                  setState(() {});
-                } ,
-                    child:  Text("Retry")),
-              ],
+
+          if (viewModel.errorMessage != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    viewModel.errorMessage!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                  ),
+                  SizedBox(height: 20.h),
+                  ElevatedButton(
+                    onPressed: (){
+                      setState(() {
+                        viewModel.getSources(widget.category);
+                      });
+                    },
+                    child: const Text("Retry"),
+                  ),
+                ],
+              ),
             );
           }
-          var response=snapshot.data ;
-          if(response?.status=="error"){
-            return Column(
-              children: [
-                Text(response?.message.toString()??""),
-                ElevatedButton(onPressed: (){
-                  setState(() {});
-                } ,
-                    child:  Text("Retry")),
-              ],
-            );
-          }
-          List<Source> sources=response?.sources??[];
+
+          List<Source> sources = viewModel.sources;
+
           return DefaultTabController(
             length: sources.length,
             child: Padding(
@@ -84,7 +89,9 @@ class _CategoryDetailsWidgetState extends State<CategoryDetailsWidget> {
                 ],
               ),
             ),
-          );
-        });
+          );        },
+      ),
+    );
   }
 }
+

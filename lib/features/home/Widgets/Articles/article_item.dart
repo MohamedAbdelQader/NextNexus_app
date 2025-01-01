@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:next_nexus_app/Remote/Articles_Response/Article.dart';
-import 'package:next_nexus_app/features/home/Widgets/Category_Details/article_model.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ArticleItem extends StatelessWidget {

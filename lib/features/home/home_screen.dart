@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:next_nexus_app/core/constants/app_images/app_images.dart';
-import 'package:next_nexus_app/features/home/Widgets/Category_Details/category_details_widget.dart';
+import 'package:next_nexus_app/features/home/Widgets/CategoryDetails_widget/category_details_widget.dart';
 
 import '../../core/constants/custom-widgets/custom_drawer.dart';
 import 'Widgets/Categories_Widget/categories_view.dart';
