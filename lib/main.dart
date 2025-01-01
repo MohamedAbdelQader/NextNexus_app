@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:next_nexus_app/DI/Di.dart';
 import 'package:next_nexus_app/core/constants/style/app_style.dart';
 import 'package:next_nexus_app/features/home/Widgets/Categories_Widget/categories_view.dart';
 import 'package:next_nexus_app/features/home/Widgets/Settings_Widget/settings_view.dart';
-
+import 'package:get_it/get_it.dart';
+import 'package:next_nexus_app/repository/sourcesRepo.dart';
+import 'features/home/Widgets/Category_Details_Widget/categoryDetailsViewModel.dart';
 import 'features/home/home_screen.dart';
 
+final GetIt sl = GetIt.instance;
+
+void setupDependencies() {
+  sl.registerLazySingleton<CategoryDetailsViewModel>(() => CategoryDetailsViewModel( sl.get<SourcesRepo>()));
+}
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ScreenUtil.ensureScreenSize();
+  configureDependencies();
+  setupDependencies();
+
   runApp(const MyApp());
 }
 
